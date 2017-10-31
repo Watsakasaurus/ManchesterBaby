@@ -20,5 +20,4 @@ class Store{
 		vector<vector<char> > storeArray; //2d char array
 		int addressNumber;
 		int maxRegisterWidth;
-
 };

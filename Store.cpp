@@ -15,10 +15,10 @@ Store::Store(int addresses, int registerWidth): addressNumber (addresses), maxRe
 bool Store::LoadFileIntoMemory(const string fileName){
 	int j = 0;
 	string line;
-	ifstream machineCode("MachineCode.txt");
+	ifstream machineCodeFile("MachineCode.txt");
 
-	if(machineCode.is_open()){
-		while(getline(machineCode,line)){
+	if(machineCodeFile.is_open()){
+		while(getline(machineCodeFile,line)){
 			if(line.length() == maxRegisterWidth + 1){ //+1 Allows for newline character
 				for(int i = 0; i < storeArray.size(); i++){
 					if(line.at(i) != '1' && line.at(i) != '0'){
@@ -31,7 +31,7 @@ bool Store::LoadFileIntoMemory(const string fileName){
 			}
 			j++;
 		}
-		machineCode.close();
+		machineCodeFile.close();
 	}else{
 		return false;
 	}

@@ -8,28 +8,33 @@ Store::Store(int addresses, int registerWidth): addressNumber (addresses), maxRe
 	storeArray.resize(addresses);
 	for(int i = 0;i < storeArray.size();i++){	//Initialise 2d array;
 		storeArray[i].resize(maxRegisterWidth);
+		for (int j = 0; j < storeArray[i].size(); j++)
+		{
+			storeArray[i][j] = '0';
+		}
 	}	
 }
 
 
-bool Store::LoadFileIntoMemory(const string fileName){
-	int j = 0;
+bool Store::LoadFileIntoMemory(const string fileName){ //Reads file into 2D array 
+	int i = 0;
 	string line;
-	ifstream machineCodeFile("MachineCode.txt");
+
+	ifstream machineCodeFile(fileName.c_str());
 
 	if(machineCodeFile.is_open()){
 		while(getline(machineCodeFile,line)){
 			if(line.length() == maxRegisterWidth + 1){ //+1 Allows for newline character
-				for(int i = 0; i < storeArray.size(); i++){
-					if(line.at(i) != '1' && line.at(i) != '0'){
+				for(int j = 0; j < storeArray.size(); j++){
+					if(line.at(j) != '1' && line.at(j) != '0'){
 						return false;
 					}
-					storeArray[j][i] = line.at(i);
+					storeArray[i][j] = line.at(j);
 				}
 			}else{
 				return false;
 			}
-			j++;
+			i++;
 		}
 		machineCodeFile.close();
 	}else{
@@ -39,11 +44,11 @@ bool Store::LoadFileIntoMemory(const string fileName){
 	return true;
 }
 
-vector<char> Store::GetInstruction(int i){
+vector<char> Store::GetInstruction(int i){ //Returns store line from store
 	return storeArray[i];
 }
 
-void Store::DisplayStore(){
+void Store::DisplayStore(){ //Displays contents of the store
 	for(int i=0;i<storeArray.size();i++){
 		for(int j=0;j<storeArray[i].size();j++){
 			cout << storeArray[i][j];

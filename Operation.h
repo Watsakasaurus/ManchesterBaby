@@ -3,23 +3,25 @@
 #include <iostream>
 #include <string>
 
+using namespace std;
+
 class Operator{
 	public:
 		Operator();
-		FetchExcectue();
+		void FetchExecute();
 
 	private:
-		IncrementCI();
-		DecodeOpcode();
-		DecodeOperand();
-		CovnvertBinToInt();
+		void IncrementCI();
+		void DecodeOpcode(vector<char> instruction);
+		void DecodeOperand(vector<char> instruction);
+		int ConvertBinToInt(vector<char> binSequence);
 
 		vector<char> controlInstruction;
 		vector<char> presentInstruction;
 
-		vector<char> operand(4,'0');
-		vector<char> opcode(3,'0');
+		vector<char> operand;
+		vector<char> opcode;
 
-}
+};
 
 

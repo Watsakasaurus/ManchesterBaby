@@ -13,6 +13,7 @@ class Store{
 
 		vector<char> GetInstruction(int i);
 		bool LoadFileIntoMemory(const string fileName); 
+		void WriteToStore(int i, vector<char> newItem);
 		void DisplayStore();
 
 	private:

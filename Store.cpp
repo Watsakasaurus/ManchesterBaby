@@ -15,7 +15,6 @@ Store::Store(int addresses, int registerWidth): addressNumber (addresses), maxRe
 	}	
 }
 
-
 bool Store::LoadFileIntoMemory(const string fileName){ //Reads file into 2D array 
 	int i = 0;
 	string line;
@@ -40,8 +39,11 @@ bool Store::LoadFileIntoMemory(const string fileName){ //Reads file into 2D arra
 	}else{
 		return false;
 	}
-
 	return true;
+}
+
+void Store::WriteToStore(int i, vector<char> newItem){ //Writes new item to store at index i
+	storeArray[i] = newItem;
 }
 
 vector<char> Store::GetInstruction(int i){ //Returns store line from store

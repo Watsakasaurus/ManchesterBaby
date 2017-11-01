@@ -2,26 +2,31 @@
 #include <vector>
 #include <iostream>
 #include <string>
+#include <bitset>
+#include <algorithm>
 
 using namespace std;
 
-class Operator{
+class Operation{
 	public:
-		Operator();
+		Operation(int registerSize);
 		void FetchExecute();
-
+		void PrintLine(vector<char> toPrint);
 	private:
+		void ExecuteInstruction();
 		void IncrementCI();
-		void DecodeOpcode(vector<char> instruction);
-		void DecodeOperand(vector<char> instruction);
+		vector<char> GetOpcode(vector<char> instruction);
+		vector<char> GetOperand(vector<char> instruction);
+		vector<char> FlipBinSequence(vector<char> binSequence);	
 		int ConvertBinToInt(vector<char> binSequence);
 
 		vector<char> controlInstruction;
 		vector<char> presentInstruction;
+		vector<char> accumulator;
 
-		vector<char> operand;
-		vector<char> opcode;
-
+		int operand;
+		int opcode;
+		int registerWidth;
 };
 
 

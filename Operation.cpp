@@ -4,7 +4,6 @@
 using namespace std;
 
 Operation::Operation(int registerSize): registerWidth (registerSize){
-
 	CI.resize(registerWidth);
 	PI.resize(registerWidth);
 	ACC.resize(registerWidth);

@@ -10,20 +10,31 @@ using namespace std;
 class Operation{
 	public:
 		Operation(int registerSize);
-		void FetchExecute();
-		void PrintLine(vector<char> toPrint);
-	private:
-		void ExecuteInstruction();
+
+		bool Execute();
 		void IncrementCI();
-		vector<char> GetOpcode(vector<char> instruction);
-		vector<char> GetOperand(vector<char> instruction);
-		vector<char> FlipBinSequence(vector<char> binSequence);	
+		void DecodeOP();
 		int ConvertBinToInt(vector<char> binSequence);
+		void PrintLine(vector<char> toPrint);
 
-		vector<char> controlInstruction;
-		vector<char> presentInstruction;
-		vector<char> accumulator;
+		int GetOperand();
+		int GetOpcode();
 
+		vector<char> GetCI();
+		vector<char> GetPI();
+		vector<char> GetACC();
+
+		void SetCI(vector<char> CtrI);
+		void SetPI(vector<char> PresI);
+		void SetACC(vector<char> Accumulator);
+
+		
+	private:
+		vector<char> FlipBinSequence(vector<char> binSequence);
+
+		vector<char> CI; //Control instruction
+		vector<char> PI; //Present instruction
+		vector<char> ACC; //Accumulator instruction
 		int operand;
 		int opcode;
 		int registerWidth;

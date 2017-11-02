@@ -5,24 +5,22 @@ using namespace std;
 
 Operation::Operation(int registerSize): registerWidth (registerSize){
 
-	controlInstruction.resize(registerWidth);
-	presentInstruction.resize(registerWidth);
-	accumulator.resize(registerWidth);
+	CI.resize(registerWidth);
+	PI.resize(registerWidth);
+	ACC.resize(registerWidth);
 
 	for(int i=0;i<registerWidth;i++){
-		controlInstruction[i] = '0';
-		presentInstruction[i] = '0';
-		accumulator[i] = '0';
+		CI[i] = '0';
+		PI[i] = '0';
+		ACC[i] = '0';
 	}
 	operand = 0;
 	opcode = 0;
 }
 
-void Operation::FetchExecute(){
-	//TODO
-}
 
-void Operation::ExecuteInstruction(){ //TODO
+bool Operation::Execute(){ //TODO
+	bool exit;
 	switch(opcode){
 		case 0:
 			break;
@@ -39,22 +37,20 @@ void Operation::ExecuteInstruction(){ //TODO
 		case 6:
 			break;
 		case 7:
+		return false;
 			break;
 	}
-
+	return true;
 }
 
 void Operation::IncrementCI(){
 	//TODO
 }
 
-vector<char> Operation::GetOpcode(vector<char> instruction){
+void Operation::DecodeOP(){
 	//TODO
 }
 
-vector<char> Operation::GetOperand(vector<char> instruction){
-	//TODO
-}
 
 int Operation::ConvertBinToInt(vector<char> binSequence){
 	//TODO
@@ -72,5 +68,16 @@ void Operation::PrintLine(vector<char> toPrint){ //Prints out vector array of ch
 	cout << endl;
 }
 
+//Get
+int Operation::GetOperand(){return operand;}
+int Operation::GetOpcode(){return opcode;}
+vector<char> Operation::GetCI(){return CI;}
+vector<char> Operation::GetPI(){return PI;}
+vector<char> Operation::GetACC(){return ACC;}
+
+//Set
+void Operation::SetCI(vector<char> CtrI){CI = CtrI;}
+void Operation::SetPI(vector<char> PresI){PI = PresI;}
+void Operation::SetACC(vector<char> Accumulator){ACC = Accumulator;}
 
 

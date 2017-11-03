@@ -4,6 +4,8 @@
 #include <string>
 #include <bitset>
 #include <algorithm>
+#include <stdlib.h>
+#include <math.h>   
 
 using namespace std;
 
@@ -11,11 +13,13 @@ class Operation{
 	public:
 		Operation(int registerSize);
 
-		bool Execute();
 		void IncrementCI();
 		void DecodeOP();
 		int ConvertBinToInt(vector<char> binSequence);
+		vector<char>ConvertIntToBin(long long int integer);
+		vector<char>BinaryToNegative(vector <char> binSequence);
 		void PrintLine(vector<char> toPrint);
+
 
 		int GetOperand();
 		int GetOpcode();
@@ -32,12 +36,13 @@ class Operation{
 	private:
 		vector<char> FlipBinSequence(vector<char> binSequence);
 
-		vector<char> CI; //Control instruction
+		vector<char> CI; //Control instructionm 
 		vector<char> PI; //Present instruction
 		vector<char> ACC; //Accumulator instruction
 		int operand;
 		int opcode;
-		int registerWidth;
+
+		int registerWidth; 
 };
 
 

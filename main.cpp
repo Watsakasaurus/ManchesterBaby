@@ -12,7 +12,7 @@ int REGISTER_WIDTH = 32;
 string fileName;
 
 
-bool Execute(Operation op, Store store){
+bool Execute(Operation &op, Store &store){
 	bool exit;
 	switch(op.GetOpcode()){
 		case 0:  
@@ -21,14 +21,14 @@ bool Execute(Operation op, Store store){
 		case 1:	
 			op.SetCI(op.ConvertIntToBin(op.ConvertBinToInt(op.GetCI()) + op.ConvertBinToInt((store.GetInstruction(op.GetOperand()))))); //JRP
 			break;
-		case 2:		  	
-			op.SetACC(store.GetInstruction(op.GetOperand())); //LDN
+		case 2:	 	
+			op.SetACC(op.ConvertIntToBin(-op.ConvertBinToInt(store.GetInstruction(op.GetOperand())))); //LDN 
 			break;
-		case 3:		
-			store.WriteToStore(op.GetOperand(),op.GetACC());	//STO
+		case 3:	
+			store.WriteToStore(op.GetOperand(),op.GetACC()); //STO WORKS
 			break;		
 		case 4:	
-			op.SetACC(op.ConvertIntToBin(op.ConvertBinToInt(op.GetACC()) - op.ConvertBinToInt(store.GetInstruction(op.GetOperand()))));//SUB
+			op.SetACC(op.ConvertIntToBin(op.ConvertBinToInt(op.GetACC()) - op.ConvertBinToInt(store.GetInstruction(op.GetOperand()))));//SUB 
 			break;
 		case 5:	
 			op.SetACC(op.ConvertIntToBin(op.ConvertBinToInt(op.GetACC()) - op.ConvertBinToInt(store.GetInstruction(op.GetOperand()))));//SUB
@@ -36,28 +36,34 @@ bool Execute(Operation op, Store store){
 		case 6:	
 			if(op.ConvertBinToInt(op.GetACC()) < 0){op.IncrementCI();}//CMP
 			break;
-		case 7:			//STP
-		return false;
+		case 7:	
+			cout << "STOP" << endl;		//STP
+			return true;
 			break;
 	}
-	return true;
+	return false;
 }
 
 
-void FetchExecute(Operation op, Store store){
+void FetchExecute(Operation &op, Store &store){
 	bool exit = false;
+	int i = 0;
 
 	while(!exit){
 		op.IncrementCI(); //Increment
 		op.SetPI(store.GetInstruction(op.ConvertBinToInt(op.GetCI()))); //Fetch
 		op.DecodeOP(); //Decode
-		op.SetACC(store.GetInstruction(op.GetOperand()));//Fetch
-		exit = Execute(op,store);//Execute
+		exit = Execute(op, store);//Execute
+		cout << op.ConvertBinToInt(op.GetCI()) << "|";	//Used to debug
+		cout << op.GetOpcode() << " | ";
+		cout << op.GetOperand() << endl; 
+		op.PrintLine(op.GetPI());
+		op.PrintLine(op.GetACC());
 	}
 }
 
 void DisplayEverything(){
-
+	//TODO;
 }
 
 
@@ -70,28 +76,13 @@ int main(){
 		cout << "Error reading file: " << fileName << endl;
 		return 0;
 	}
-	store.DisplayStore();
 
 	cout << endl;
 	cout << endl;
 
 	Operation op(REGISTER_WIDTH); //Creates Operation object that controlls the fetch execute cycle
 
-	op.IncrementCI(); //Increment
-
-	op.SetPI(store.GetInstruction(op.ConvertBinToInt(op.GetCI()))); //Fetch
-	op.DecodeOP(); //Decode
-
-	cout << op.GetOpcode() << endl;
-	cout << op.GetOperand() << endl;
-
-
-
-	
-
-
-
-
+	FetchExecute(op,store);
 
 	return 0;
 }

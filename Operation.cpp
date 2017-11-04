@@ -35,37 +35,49 @@ void Operation::DecodeOP(){ //Gets Opcode and Operand from Present Instruction
 		binOperand[i] = PI[i];
 	}
 
-	for(int j = 13; j < 15;j++){
+	for(int j = 13; j < 16;j++){
 		binOpcode[counter] = PI[j];
 		counter++;
 	}
+
 	operand = ConvertBinToInt(binOperand);
 	opcode = ConvertBinToInt(binOpcode);
 }
 
 
-int Operation::ConvertBinToInt(vector<char> binSequence){
-	int multiplier = 1;
-	int total = 0;
+long long int Operation::ConvertBinToInt(vector<char> binSequence){ //Convers Binary to Integer 0011 0001 = -116 
+	long long int multiplier = 1;
+	long long int total = 0;
 
 	for(int i = 0; i < binSequence.size();i++){
-		if(binSequence[i] == '1'){
-			total += multiplier;
-		}
-		multiplier = multiplier + multiplier;
+		if(i == binSequence.size()-1 && binSequence.size() == registerWidth){
+			if(binSequence[i] == '1'){ //if negative
+				total -= multiplier;
+			}
+		}else{
+			if(binSequence[i] == '1'){
+				total += multiplier;
+			}
+		}	
+		multiplier = multiplier * 2;
 	}
+
+	//cout << endl << total << endl;
 	return total;
 }
 
-vector<char> Operation::ConvertIntToBin(long long int integer){
+vector<char> Operation::ConvertIntToBin(long long int integer){ //Converts Integer to Binary 
 	vector<char> converted(registerWidth,'0');
 	bool negative = false;
-	long long int smallest = -1*(pow(2,registerWidth-1)); //Smallest Integer that our simulation can take
+	long long int smallest = -pow(2,registerWidth-1); //Smallest Integer that our simulation can take
 	long long int largest = pow(2,registerWidth-1) - 1; //Largest Integer that our simulation can take
 
 	if(integer < 0){
 		negative = true;
-	}else if(integer < smallest || integer > largest){
+		integer = integer*-1;
+	}
+	
+	if(integer < smallest || integer > largest){
 		cout << endl << "OUT OF MEMORY!" << endl;
 		exit(EXIT_FAILURE);
 	}
@@ -85,7 +97,7 @@ vector<char> Operation::ConvertIntToBin(long long int integer){
 		}
 		counter++;
 	}
-
+	//2's complement
 	if(negative){
 		for(int i = 0; i < converted.size(); i++){
 			if(converted[i] == '0'){
@@ -94,9 +106,20 @@ vector<char> Operation::ConvertIntToBin(long long int integer){
 				converted[i] = '0';
 			}
 		}
-		converted = ConvertIntToBin(ConvertBinToInt(converted) + 1);
-	}
 
+		//add one to binary 
+		bool remainder = true;
+		int counter = 0;
+		while(remainder){
+			if(converted[counter] == '0'){
+				converted[counter] = '1';
+				remainder = false;
+			}else{
+				converted[counter] = '0';
+			}
+			counter++;
+		}
+	}
 	return converted;
 }
 

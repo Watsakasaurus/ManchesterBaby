@@ -15,7 +15,7 @@ class Operation{
 
 		void IncrementCI();
 		void DecodeOP();
-		int ConvertBinToInt(vector<char> binSequence);
+		long long int ConvertBinToInt(vector<char> binSequence);
 		vector<char>ConvertIntToBin(long long int integer);
 		vector<char>BinaryToNegative(vector <char> binSequence);
 		void PrintLine(vector<char> toPrint);

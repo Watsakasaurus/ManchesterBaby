@@ -18,13 +18,17 @@ Operation::Operation(int registerSize): registerWidth (registerSize){
 }
 
 void Operation::IncrementCI(){ //Adds one to binary sequence
-	for(int i = 0; i < CI.size(); i++){
-		if(CI[i] == '0'){
-			CI[i] = '1';
-			break;
+	bool remainder = true;
+	int i = 0;
+		while(remainder){
+			if(CI[i] == '0'){
+				CI[i] = '1';
+				remainder = false;
+			}else{
+				CI[i] = '0';
+			}
+			i++;
 		}
-		CI[i] = '0';
-	}
 }
 
 void Operation::DecodeOP(){ //Gets Opcode and Operand from Present Instruction

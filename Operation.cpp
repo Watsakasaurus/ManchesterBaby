@@ -138,8 +138,18 @@ vector<char> Operation::FlipBinSequence(vector<char> binSequence){ //Reverses or
 
 void Operation::PrintLine(vector<char> toPrint){ //Prints out vector array of characters
 	for(int i = 0; i<toPrint.size();i++){
-		cout << toPrint[i];
+		//cout << toPrint[i];
+		if(toPrint[i] == '0'){
+			cout << "\u25E6";
+		}else{
+			cout << "\u2022";
+		}
+
+		if((i + 1) % 4 == 0){
+			cout << " ";
+		}
 	}
+	cout << endl;
 }
 
 //Get

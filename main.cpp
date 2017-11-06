@@ -54,16 +54,48 @@ void FetchExecute(Operation &op, Store &store){
 		op.SetPI(store.GetInstruction(op.ConvertBinToInt(op.GetCI()))); //Fetch
 		op.DecodeOP(); //Decode
 		exit = Execute(op, store);//Execute
-		cout << op.ConvertBinToInt(op.GetCI()) << "|";	//Used to debug
+		/*cout << op.ConvertBinToInt(op.GetCI()) << "|";	//Used to debug
 		cout << op.GetOpcode() << " | ";
 		cout << op.GetOperand() << endl; 
 		op.PrintLine(op.GetPI());
-		op.PrintLine(op.GetACC());
+		op.PrintLine(op.GetACC());*/
 	}
 }
 
-void DisplayEverything(){
-	//TODO;
+void DisplayEverything(Operation &op, Store &store){
+	vector<vector<char> > storeArray = store.GetStore();
+
+	cout << "STORE 								CI:";
+	op.PrintLine(op.GetCI());
+	cout << endl;
+
+	for(int i=0;i<storeArray.size();i++){
+		for(int j=0;j<storeArray[i].size();j++){
+			if(storeArray[i][j] =='0')
+			{
+				cout << "\u25E6"; //displays alternative unicode character for 0
+			}
+			else if (storeArray[i][j] == '1')
+			{
+				cout << "\u2022"; //displays alternative unicode character for 1
+			}
+			if((j +1) % 4 == 0){
+				cout << " ";
+			}
+
+		}
+		if(i == 0)
+		{
+			cout << "			PI:";
+			op.PrintLine(op.GetPI());
+		}
+		else if (i == 1)
+		{
+			cout << "			ACC:";
+			op.PrintLine(op.GetACC());
+		}
+		cout << endl;
+	} 
 }
 
 
@@ -82,7 +114,14 @@ int main(){
 
 	Operation op(REGISTER_WIDTH); //Creates Operation object that controlls the fetch execute cycle
 
+	
+	DisplayEverything(op,store);
+
 	FetchExecute(op,store);
+
+	DisplayEverything(op,store);
+
+	
 
 	return 0;
 }

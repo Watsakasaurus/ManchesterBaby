@@ -50,6 +50,10 @@ vector<char> Store::GetInstruction(int i){ //Returns store line from store
 	return storeArray[i];
 }
 
+vector<vector<char> > Store::GetStore(){
+	return storeArray;
+}
+
 void Store::DisplayStore(){ //Displays contents of the store
 	for(int i=0;i<storeArray.size();i++){
 		for(int j=0;j<storeArray[i].size();j++){

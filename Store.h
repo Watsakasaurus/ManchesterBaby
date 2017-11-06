@@ -15,6 +15,7 @@ class Store{
 		bool LoadFileIntoMemory(const string fileName); 
 		void WriteToStore(int i, vector<char> newItem);
 		void DisplayStore();
+		vector<vector<char> > GetStore();
 
 	private:
 		vector<vector<char> > storeArray; //2d char array

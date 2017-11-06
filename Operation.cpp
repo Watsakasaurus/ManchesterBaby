@@ -140,7 +140,6 @@ void Operation::PrintLine(vector<char> toPrint){ //Prints out vector array of ch
 	for(int i = 0; i<toPrint.size();i++){
 		cout << toPrint[i];
 	}
-	cout << endl;
 }
 
 //Get

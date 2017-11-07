@@ -1,6 +1,6 @@
 Manchester Baby simulation by Joe Riemersma, Calum Watson, Abbas Lawal, Alexander Quinn.
 
-USAGE: ./CA [step=<'more'|'less'>] [commentary] [file=<'filename'>] [store=<'store size'>] [register=<'register size'] [-help]
+USAGE: ./ManchesterBaby [step=<'more'|'less'>] [commentary] [file=<'filename'>] [store=<'store size'>] [register=<'register size'] [-help]
 
 	-help:
 		Displays help file.

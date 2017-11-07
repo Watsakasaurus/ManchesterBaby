@@ -23,14 +23,16 @@ bool Store::LoadFileIntoMemory(const string fileName){ //Reads file into 2D arra
 
 	if(machineCodeFile.is_open()){
 		while(getline(machineCodeFile,line)){
-			if(line.length() == maxRegisterWidth + 1){ //+1 Allows for newline character
-				for(int j = 0; j < storeArray.size(); j++){
+			if(line.length() <= maxRegisterWidth + 1){   //+1 Allows for newline character
+				for(int j = 0; j < line.length()-1; j++){
 					if(line.at(j) != '1' && line.at(j) != '0'){
+						
 						return false;
 					}
 					storeArray[i][j] = line.at(j);
 				}
 			}else{
+				
 				return false;
 			}
 			i++;

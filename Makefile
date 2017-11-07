@@ -1,8 +1,8 @@
 CC = g++
 OBJS = Store.o Operation.o
 
-MB: main.cpp ${OBJS}
-	${CC} main.cpp ${OBJS} -o MB
+ManchesterBaby: main.cpp ${OBJS}
+	${CC} main.cpp ${OBJS} -o ManchesterBaby
 
 Store.o: Store.cpp Store.h 
 	${CC} -c Store.cpp 
@@ -11,6 +11,6 @@ Operation.o: Operation.cpp Operation.h
 	${CC} -c Operation.cpp
 
 run:
-	./MB
+	./ManchesterBaby
 clean:
-	rm -f MB ${OBJS}
+	rm -f ManchesterBaby ${OBJS}

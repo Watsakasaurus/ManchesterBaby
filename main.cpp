@@ -106,6 +106,8 @@ void FetchExecute(Operation &op, Store &store){ //Loops through the fetch execut
 	bool exit = false;
 	int i = 1;
 
+	if(!step && !allstep){cout << "Initial: \n" << endl;DisplayEverything(op,store);}
+
 	while(!exit){
 		op.IncrementCI(); //Increment
 		if(allstep){DisplayEverything(op,store);cout << endl << "Cycle Number: " << i << endl;getchar();}
@@ -117,12 +119,12 @@ void FetchExecute(Operation &op, Store &store){ //Loops through the fetch execut
 		if(allstep){DisplayEverything(op,store);cout << endl << "Cycle Number: " << i << endl;getchar();}
 
 		exit = Execute(op, store);//Execute
+		if(step || allstep){DisplayEverything(op,store);cout << endl << "Cycle Number: " << i << endl;getchar();}
 
-		DisplayEverything(op,store);
-		cout << endl << "Cycle Number: " << i << endl;
-		if(step || allstep){getchar();}
 		i++;
 	}
+
+	if(!step && !allstep){cout << "Final: \n" << endl;DisplayEverything(op,store);}
 }
 
 bool TestInt(char* argv){ //Test argument char array for an integer
@@ -139,10 +141,10 @@ bool TestInt(char* argv){ //Test argument char array for an integer
 
 bool ParseArgs(int argc, char* argv[]){ //Takes arguments from user   
 	int argIndex = 1;
-	string USAGE = "USAGE: ./CA [step=<'more'|'less'>] [commentary] [file=<'filename'>] [store=<'store size'>] [register=<'register size']\nUse command '-help' to view the help file.";
-	string STEPUSAGE = "USAGE ./CA step [more] [less]\nUse command '-help' to view the help file.";
-	string STOREUSAGE = "USAGE ./CA store [store size]\nUse command '-help' to view the help file.";
-	string REGISTERUSAGE = "USAGE ./CA register [register size]\nUse command '-help' to view the help file.";
+	string USAGE = "USAGE: ./ManchesterBaby [step=<'more'|'less'>] [commentary] [file=<'filename'>] [store=<'store size'>] [register=<'register size']\nUse command '-help' to view the help file.";
+	string STEPUSAGE = "USAGE ./ManchesterBaby step [more] [less]\nUse command '-help' to view the help file.";
+	string STOREUSAGE = "USAGE ./ManchesterBaby store [store size]\nUse command '-help' to view the help file.";
+	string REGISTERUSAGE = "USAGE ./ManchesterBaby register [register size]\nUse command '-help' to view the help file.";
 
 	while(argIndex < argc){
 		if(string(argv[argIndex]) == "step"){
@@ -191,8 +193,8 @@ bool ParseArgs(int argc, char* argv[]){ //Takes arguments from user
 			if(argIndex >= argc){cout << REGISTERUSAGE << endl;return false;}
 
 			if(TestInt(argv[argIndex])){
-				if(atoi(argv[argIndex]) < 32){
-					cout << REGISTERUSAGE << endl;return false;
+				if(atoi(argv[argIndex]) < 32 || atoi(argv[argIndex])> 63){
+					cout << REGISTERUSAGE << endl << "Make sure that the number you enter is between 32 and 63, inclusive.\nThis simulation can only take a maximum of 63 bits as it requires negative numbers to run"<< endl;return false;
 				}else{
 					REGISTER_WIDTH = atoi(argv[argIndex]);
 				}
@@ -216,13 +218,11 @@ int main(int argc, char* argv[]){
 
 	
 	Store store(ADDRESS_NUMBER,REGISTER_WIDTH); //Creates Store object
+	
 	if(!store.LoadFileIntoMemory(fileName)){
 		cout << "Error reading file: " << fileName << endl;
 		return 0;
 	}
-
-	cout << endl;
-	cout << endl;
 
 	Operation op(REGISTER_WIDTH); //Creates Operation object that controlls the fetch execute cycle
 

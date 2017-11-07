@@ -125,10 +125,24 @@ void FetchExecute(Operation &op, Store &store){ //Loops through the fetch execut
 	}
 }
 
+bool TestInt(char* argv){ //Test argument char array for an integer
+	string s(argv);
+
+	//Taken from first answer https://stackoverflow.com/questions/2844817/how-do-i-check-if-a-c-string-is-an-int 
+	//user paercebal
+	if(s.empty() || ((!isdigit(s[0])) && (s[0] != '-') && (s[0] != '+'))) return false ;
+    char * p ;
+    strtol(s.c_str(), &p, 10) ;
+
+   return (*p == 0) ;
+}
+
 bool ParseArgs(int argc, char* argv[]){ //Takes arguments from user   
 	int argIndex = 1;
-	string USAGE = "USAGE: ./CA [step [more|less]] [commentary] [file ['filename']]\nUse command '-help' to view the help file.";
+	string USAGE = "USAGE: ./CA [step=<'more'|'less'>] [commentary] [file=<'filename'>] [store=<'store size'>] [register=<'register size']\nUse command '-help' to view the help file.";
 	string STEPUSAGE = "USAGE ./CA step [more] [less]\nUse command '-help' to view the help file.";
+	string STOREUSAGE = "USAGE ./CA store [store size] [less]\nUse command '-help' to view the help file.";
+	string REGISTERUSAGE = "USAGE ./CA register [register size] [less]\nUse command '-help' to view the help file.";
 
 	while(argIndex < argc){
 		if(string(argv[argIndex]) == "step"){
@@ -147,7 +161,7 @@ bool ParseArgs(int argc, char* argv[]){ //Takes arguments from user
 			fileName = string(argv[argIndex]);
 		}else if(string(argv[argIndex]) == "-help"){
 			string line;
-			ifstream helpfile("helpfile.txt");
+			ifstream helpfile("helpfile");
 			if(helpfile.is_open()){
 				while(getline(helpfile,line)){
 					cout << line << endl;
@@ -157,6 +171,28 @@ bool ParseArgs(int argc, char* argv[]){ //Takes arguments from user
 				cout << "Unable to open helpfile, please make sure it has not been deleted or moved.";
 			}	
 			return false;
+		}else if(string(argv[argIndex]) == "store"){
+			argIndex++;
+			if(argIndex >= argc){cout << STOREUSAGE << endl;return false;}
+
+			if(TestInt(argv[argIndex])){
+				if(atoi(argv[argIndex]) < 32){
+					cout << STOREUSAGE << endl;return false;
+				}else{
+					ADDRESS_NUMBER = atoi(argv[argIndex]);
+				}
+			}
+		}else if(string(argv[argIndex]) == "register"){
+			argIndex++;
+			if(argIndex >= argc){cout << REGISTERUSAGE << endl;return false;}
+
+			if(TestInt(argv[argIndex])){
+				if(atoi(argv[argIndex]) < 32){
+					cout << REGISTERUSAGE << endl;return false;
+				}else{
+					REGISTER_WIDTH = atoi(argv[argIndex]);
+				}
+			}
 		}else{
 			cout << USAGE << endl;
 			return false;

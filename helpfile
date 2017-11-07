@@ -1,6 +1,6 @@
 Manchester Baby simulation by Joe Riemersma, Calum Watson, Abbas Lawal, Alexander Quinn.
 
-USAGE: ./CA [step=[more|less]] [commentary] [file=['filename']] [-help]
+USAGE: ./CA [step=<'more'|'less'>] [commentary] [file=<'filename'>] [store=<'store size'>] [register=<'register size'] [-help]
 
 	-help:
 		Displays help file.
@@ -23,5 +23,11 @@ USAGE: ./CA [step=[more|less]] [commentary] [file=['filename']] [-help]
 	file='filename':
 		Will run 'filename' on the Manchester baby.
 		By default the program will run 'Example.txt'.
+
+	store='store size':
+		Set the number of addresses that the store contains.
+
+	register='register size':
+		Set the number of bits each process uses.
 
 

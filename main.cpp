@@ -7,8 +7,9 @@
 
 using namespace std;
 
-bool step;
-bool decodeCommentary;
+bool step = false;
+bool allstep = false;
+bool decodeCommentary = false;
 
 string mnemonic;
 
@@ -16,52 +17,52 @@ string mnemonic;
 
 int ADDRESS_NUMBER = 32;
 int REGISTER_WIDTH = 32;
-string fileName;
+string fileName = "Example.txt";
 
 
 bool Execute(Operation &op, Store &store){
 	bool exit;
 	switch(op.GetOpcode()){
 		case 0:  
-			op.SetCI(store.GetInstruction(op.GetOperand()));//JMP
+			op.SetCI(store.GetInstruction(op.GetOperand()));//JMP - Control instruction is set to line from store
 			mnemonic = "JMP";
 			break;
 		case 1:	
-			op.SetCI(op.ConvertIntToBin(op.ConvertBinToInt(op.GetCI()) + op.ConvertBinToInt((store.GetInstruction(op.GetOperand()))))); //JRP
+			op.SetCI(op.ConvertIntToBin(op.ConvertBinToInt(op.GetCI()) + op.ConvertBinToInt((store.GetInstruction(op.GetOperand()))))); //JRP - Line from store is added to control instrustion
 			mnemonic = "JRP";
 			break;
 		case 2:	 	
-			op.SetACC(op.ConvertIntToBin(-op.ConvertBinToInt(store.GetInstruction(op.GetOperand())))); //LDN 
-			mnemonic = "LDN";
+			op.SetACC(op.ConvertIntToBin(-op.ConvertBinToInt(store.GetInstruction(op.GetOperand())))); //LDN - Sets Accumulator to negative of line from the store
+			mnemonic = "LDN"; 
 			break;
 		case 3:	
-			store.WriteToStore(op.GetOperand(),op.GetACC()); //STO 
+			store.WriteToStore(op.GetOperand(),op.GetACC()); //STO - Stores contents of Accumulator in line of the store
 			mnemonic = "STO";
 			break;		
 		case 4:	
-			op.SetACC(op.ConvertIntToBin(op.ConvertBinToInt(op.GetACC()) - op.ConvertBinToInt(store.GetInstruction(op.GetOperand()))));//SUB 
+			op.SetACC(op.ConvertIntToBin(op.ConvertBinToInt(op.GetACC()) - op.ConvertBinToInt(store.GetInstruction(op.GetOperand()))));//SUB - Subtracts Line from store from Accumulator
 			mnemonic = "SUB";
 			break;
 		case 5:	
-			op.SetACC(op.ConvertIntToBin(op.ConvertBinToInt(op.GetACC()) - op.ConvertBinToInt(store.GetInstruction(op.GetOperand()))));//SUB
+			op.SetACC(op.ConvertIntToBin(op.ConvertBinToInt(op.GetACC()) - op.ConvertBinToInt(store.GetInstruction(op.GetOperand()))));//SUB - Subtracts Line from store from Accumulator
 			mnemonic = "SUB";
 			break;
 		case 6:	
-			if(op.ConvertBinToInt(op.GetACC()) < 0){op.IncrementCI();}//CMP
+			if(op.ConvertBinToInt(op.GetACC()) < 0){op.IncrementCI();}//CMP - If contents of Accumulator is less than zero, increment the CI;
 			mnemonic = "CMP";
 			break;
 		case 7:	
 			mnemonic = "STP";
-			return true;
+			return true;		//STP
 			break;
 	}
 	return false;
 }
 
-void DisplayEverything(Operation &op, Store &store){	
+void DisplayEverything(Operation &op, Store &store){	//Take a wild guess 
 	vector<vector<char> > storeArray = store.GetStore();
 
-	if(step){cout << "\033c" << endl;} //clears terminal
+	if(step || allstep){cout << "\033c" << endl;} //Clears terminal
 	
 	cout << "STORE" << endl;
 
@@ -101,25 +102,74 @@ void DisplayEverything(Operation &op, Store &store){
 	cout << endl << endl << endl;
 }
 
-void FetchExecute(Operation &op, Store &store){
+void FetchExecute(Operation &op, Store &store){ //Loops through the fetch execute cycle until stop code is reached
 	bool exit = false;
-	int i = 0;
+	int i = 1;
 
 	while(!exit){
 		op.IncrementCI(); //Increment
+		if(allstep){DisplayEverything(op,store);cout << endl << "Cycle Number: " << i << endl;getchar();}
+
 		op.SetPI(store.GetInstruction(op.ConvertBinToInt(op.GetCI()))); //Fetch
+		if(allstep){DisplayEverything(op,store);cout << endl << "Cycle Number: " << i << endl;getchar();}
+
 		op.DecodeOP(); //Decode
+		if(allstep){DisplayEverything(op,store);cout << endl << "Cycle Number: " << i << endl;getchar();}
+
 		exit = Execute(op, store);//Execute
+
 		DisplayEverything(op,store);
-		if(step){getchar();}
+		cout << endl << "Cycle Number: " << i << endl;
+		if(step || allstep){getchar();}
+		i++;
 	}
 }
 
-int main(){
-	step = false;
-	decodeCommentary = true;
+bool ParseArgs(int argc, char* argv[]){ //Takes arguments from user   
+	int argIndex = 1;
+	string USAGE = "USAGE: ./CA [step [more|less]] [commentary] [file ['filename']]\nUse command '-help' to view the help file.";
+	string STEPUSAGE = "USAGE ./CA step [more] [less]\nUse command '-help' to view the help file.";
 
-	fileName = "MachineCode.txt";
+	while(argIndex < argc){
+		if(string(argv[argIndex]) == "step"){
+			argIndex++;
+			if(argIndex >= argc){cout << STEPUSAGE << endl;return false;}
+
+			if(string(argv[argIndex]) == "more"){allstep = true;}
+			else if(string(argv[argIndex]) == "less"){step = true;}
+			else{cout << STEPUSAGE << endl;return false;}
+
+		}else if(string(argv[argIndex]) == "commentary"){
+			decodeCommentary = true;
+		}else if(string(argv[argIndex]) == "file"){
+			argIndex++;
+			if(argIndex >= argc){cout << USAGE << endl;return false;}
+			fileName = string(argv[argIndex]);
+		}else if(string(argv[argIndex]) == "-help"){
+			string line;
+			ifstream helpfile("helpfile.txt");
+			if(helpfile.is_open()){
+				while(getline(helpfile,line)){
+					cout << line << endl;
+				}
+				helpfile.close();
+			}else{
+				cout << "Unable to open helpfile, please make sure it has not been deleted or moved.";
+			}	
+			return false;
+		}else{
+			cout << USAGE << endl;
+			return false;
+		}
+		argIndex++;
+	}
+	return true;
+}
+
+int main(int argc, char* argv[]){
+
+	if(!ParseArgs(argc,argv)){return 0;}
+
 	
 	Store store(ADDRESS_NUMBER,REGISTER_WIDTH); //Creates Store object
 	if(!store.LoadFileIntoMemory(fileName)){
@@ -133,9 +183,6 @@ int main(){
 	Operation op(REGISTER_WIDTH); //Creates Operation object that controlls the fetch execute cycle
 
 	FetchExecute(op,store);
-
-
-	
 
 	return 0;
 }

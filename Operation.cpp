@@ -49,12 +49,12 @@ void Operation::DecodeOP(){ //Gets Opcode and Operand from Present Instruction
 }
 
 
-long long int Operation::ConvertBinToInt(vector<char> binSequence){ //Convers Binary to Integer 0011 0001 = -116 
+long long int Operation::ConvertBinToInt(vector<char> binSequence){ //Convers Binary to Integer
 	long long int multiplier = 1;
 	long long int total = 0;
 
 	for(int i = 0; i < binSequence.size();i++){
-		if(i == binSequence.size()-1 && binSequence.size() == registerWidth){
+		if(i == binSequence.size()-1 && binSequence.size() == registerWidth){ //If we are converting a value from the store
 			if(binSequence[i] == '1'){ //if negative
 				total -= multiplier;
 			}
@@ -65,8 +65,6 @@ long long int Operation::ConvertBinToInt(vector<char> binSequence){ //Convers Bi
 		}	
 		multiplier = multiplier * 2;
 	}
-
-	//cout << endl << total << endl;
 	return total;
 }
 
@@ -76,16 +74,17 @@ vector<char> Operation::ConvertIntToBin(long long int integer){ //Converts Integ
 	long long int smallest = -pow(2,registerWidth-1); //Smallest Integer that our simulation can take
 	long long int largest = pow(2,registerWidth-1) - 1; //Largest Integer that our simulation can take
 
-	if(integer < 0){
+	if(integer < 0){ 		//If number is a negative
 		negative = true;
 		integer = integer*-1;
 	}
 	
-	if(integer < smallest || integer > largest){
+	if(integer < smallest || integer > largest){ //If number is too large or too small for the size of our register
 		cout << endl << "OUT OF MEMORY!" << endl;
 		exit(EXIT_FAILURE);
 	}
 
+	//Converts the integer to a binary number
 	int bit = 0;
 	int quot = 0; //quotient
 	int counter = 0;
@@ -101,7 +100,7 @@ vector<char> Operation::ConvertIntToBin(long long int integer){ //Converts Integ
 		}
 		counter++;
 	}
-	//2's complement
+	//2's complement conversion
 	if(negative){
 		for(int i = 0; i < converted.size(); i++){
 			if(converted[i] == '0'){
@@ -127,16 +126,12 @@ vector<char> Operation::ConvertIntToBin(long long int integer){ //Converts Integ
 	return converted;
 }
 
-vector<char> Operation::BinaryToNegative(vector<char> binSequence){
-	return ConvertIntToBin(-1*ConvertBinToInt(binSequence));
-}
-
-vector<char> Operation::FlipBinSequence(vector<char> binSequence){ //Reverses order of binary sequence
+vector<char> Operation::FlipBinSequence(vector<char> binSequence){ //Reverses order of binary sequence Only used for testing
 	reverse(binSequence.begin(),binSequence.end());
 	return binSequence;
 }
 
-void Operation::PrintLine(vector<char> toPrint){ //Prints out vector array of characters
+void Operation::PrintLine(vector<char> toPrint){ //Prints out vector array of characters in one line
 	for(int i = 0; i<toPrint.size();i++){
 		//cout << toPrint[i];
 		if(toPrint[i] == '0'){

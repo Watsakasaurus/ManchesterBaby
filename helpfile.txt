@@ -1,0 +1,27 @@
+Manchester Baby simulation by Joe Riemersma, Calum Watson, Abbas Lawal, Alexander Quinn.
+
+USAGE: ./CA [step=[more|less]] [commentary] [file=['filename']] [-help]
+
+	-help:
+		Displays help file.
+
+	step:
+
+		Changes the point that the manchester baby will pause so that the the state can be inspected.
+		By default at the end of every fetch exectute cycle the Store, CI, PI and the ACC will be displayed.
+
+		Options:
+				more:
+					Will Display every step of the fetch execute cycle.
+				less: 
+					Will display state of everything at the end of each step of the fetch execute cycle.
+
+	commentary:
+
+		Allows user to see the decode commentary as the program exectues.
+
+	file='filename':
+		Will run 'filename' on the Manchester baby.
+		By default the program will run 'Example.txt'.
+
+

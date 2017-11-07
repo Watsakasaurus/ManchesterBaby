@@ -141,8 +141,8 @@ bool ParseArgs(int argc, char* argv[]){ //Takes arguments from user
 	int argIndex = 1;
 	string USAGE = "USAGE: ./CA [step=<'more'|'less'>] [commentary] [file=<'filename'>] [store=<'store size'>] [register=<'register size']\nUse command '-help' to view the help file.";
 	string STEPUSAGE = "USAGE ./CA step [more] [less]\nUse command '-help' to view the help file.";
-	string STOREUSAGE = "USAGE ./CA store [store size] [less]\nUse command '-help' to view the help file.";
-	string REGISTERUSAGE = "USAGE ./CA register [register size] [less]\nUse command '-help' to view the help file.";
+	string STOREUSAGE = "USAGE ./CA store [store size]\nUse command '-help' to view the help file.";
+	string REGISTERUSAGE = "USAGE ./CA register [register size]\nUse command '-help' to view the help file.";
 
 	while(argIndex < argc){
 		if(string(argv[argIndex]) == "step"){

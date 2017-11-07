@@ -181,6 +181,10 @@ bool ParseArgs(int argc, char* argv[]){ //Takes arguments from user
 				}else{
 					ADDRESS_NUMBER = atoi(argv[argIndex]);
 				}
+			}else{
+				cout << "Please follow 'store' with an integer" << endl;
+				cout << STOREUSAGE << endl;
+				return false;
 			}
 		}else if(string(argv[argIndex]) == "register"){
 			argIndex++;
@@ -192,6 +196,10 @@ bool ParseArgs(int argc, char* argv[]){ //Takes arguments from user
 				}else{
 					REGISTER_WIDTH = atoi(argv[argIndex]);
 				}
+			}else{
+				cout << "Please follow 'store' with an integer" << endl;
+				cout << REGISTERUSAGE << endl;
+				return false;
 			}
 		}else{
 			cout << USAGE << endl;

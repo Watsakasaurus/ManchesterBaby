@@ -2,10 +2,10 @@ CC = g++
 CFLAGS = -Wall -pedantic -Wextra
 
 compile: Assembler.cpp
-	${CC} -std=c++11 -o Assembler ${CFLAGS} Assembler.cpp
+	${CC} -std=c++11 -o mb++ ${CFLAGS} Assembler.cpp
 
 run:
-	./Assembler
+	./mb++
 
 clean:
-	rm -f Assembler
+	rm -f mb++

@@ -13,7 +13,7 @@ struct Symbol{
 	int address;
 };
 
-vector< vector<string>> toAssemble;
+vector< vector<string> > toAssemble;
 vector< vector<char> > assembled;
 vector<Symbol> symbolTable;
 

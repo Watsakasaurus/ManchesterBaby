@@ -1,13 +1,13 @@
-;	
-; The program starts at address 1, so we need to pad out address 0
+; THIS PROGRAM SHOULD DO ADD THREE NUMBERS TOGETHER
+; The program starts at address 1, so we need to pad out address 0 
 	VAR 0       ; Declare 32-bit variable to fill space
 START: 	LDN NUM03   ; Copy variable to accumulator (negated)
 	SUB NUM04   ; Subtract variable from accumulator to get sum (negated)
 	SUB NUM05   ; Subtract variable from accumulator to get sum (negated)
 	STO MYSUM1  ; Store accumulator to variable - saves answer
 ; The next two instructions negate the stored answer
-	LDN MYSUM   ; Copy variable to accumulator (negated)
-        STO MYSUM   ; Store accumulator to variable
+	LDN MYSUM1   ; Copy variable to accumulator (negated)
+        STO MYSUM1   ; Store accumulator to variable
 END:	STP	    ; Stop processor
 ; Variable declarations follow
 NUM03:   VAR 1025    ; Declare 32-bit variable, Showing off we can use different variable names

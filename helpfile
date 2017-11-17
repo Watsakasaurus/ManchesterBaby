@@ -3,8 +3,9 @@ Manchester Baby simulation by Joe Riemersma, Calum Watson, Abbas Lawal, Alexande
 USAGE: ./ManchesterBaby [step=<'more'|'less'>] [commentary] [file=<'filename'>] [store=<'store size'>] [register=<'register size'] [-help]
 
 	-help:
-		Displays help file.
 
+		Displays help file.
+		
 	step:
 
 		Changes the point that the manchester baby will pause so that the the state can be inspected.
@@ -13,7 +14,7 @@ USAGE: ./ManchesterBaby [step=<'more'|'less'>] [commentary] [file=<'filename'>] 
 		Options:
 				more:
 					Will Display every step of the fetch execute cycle.
-				less: 
+				less:
 					Will display state of everything at the end of each step of the fetch execute cycle.
 
 	commentary:
@@ -29,5 +30,3 @@ USAGE: ./ManchesterBaby [step=<'more'|'less'>] [commentary] [file=<'filename'>] 
 
 	register='register size':
 		Set the number of bits each process uses.
-
-

@@ -8,52 +8,187 @@
 
 using namespace std;
 
+struct Symbol{
+	string name;
+	int address;
+};
+
 vector< vector<string>> toAssemble;
+vector< vector<char> > assembled;
+vector<Symbol> symbolTable;
 
-void createSymbolTable()
-{
-
-	/*2nd pass thru tokens
-
-	search for variables and labels(start, end)
-
-	everytime a variable is called, use the reference to the place in memory the variable is stored
-
-	if var01 = 1025, points to the space in memory*/
-
+int SearchTable(string search){
+	for(int i = 0; i < symbolTable.size(); i++){
+		if(symbolTable[i].name == search){
+			return symbolTable[i].address;
+		}
+	}
+	return -1;
 }
 
-void instructionConversion(){
-	string opCode = ""; //this needs to be passed from symbol table function
+void AddToTable(string name, int address){
+	if(SearchTable(name) != -1){
+		return;
+	}
+	string shortName = name.substr(0, name.size()-1);
+	Symbol newSymbol;
+	newSymbol.name = shortName;
+	newSymbol.address = address;
+
+	symbolTable.push_back(newSymbol);
+}
+
+
+
+int InstructionConversion(string opCode){
 
 	if(opCode == "JMP"){
-		opCode = "000";
+		return 0;
 	}else if(opCode == "JRP"){
-		opCode = "100";
+		return 1;
 	}else if(opCode == "LDN"){
-		opCode = "010";
+		return 2;
 	}else if(opCode == "STO"){
-		opCode = "110";
+		return 3;
 	}else if(opCode == "SUB"){
-		opCode = "001";
+		return 4;
 	}else if(opCode == "SUB"){
-		opCode = "101";
+		return 5;
 	}else if(opCode == "CMP"){
-		opCode = "011";
+		return 6;
 	}else if(opCode == "STP"){
-		opCode = "111";
+		return 7;
+	}else{
+		return -1;
 	}
 
 }
 
-void convertToMachineCode(){
-/*
-	address location = operand
+long long int StringToInt(string s){
+	long long int x;
+	stringstream ss(s);
+	ss >> x;
+	return x;
+}
 
-	input opcode
+vector<char> ConvertIntToBin(long long int integer){ //Converts Integer to Binary
+	vector<char> converted(32,'0');
+	bool negative = false;
+	long long int smallest = -pow(2,32-1); //Smallest Integer that our assembler can take
+	long long int largest = pow(2,32-1) - 1; //Largest Integer that our assembler
 
-	fill out rest of 32 bit strings with "appropriate" */
+	if(integer < 0){ 		//If number is a negative
+		negative = true;
+		integer = integer*-1;
+	}
 
+	if(integer < smallest || integer > largest){ //If number is too large or too small for the size of our register
+		cout << endl << "OUT OF MEMORY!" << endl;
+		exit(EXIT_FAILURE);
+	}
+
+	//Converts the integer to a binary number
+	int bit = 0;
+	int quot = 0; //quotient
+	int counter = 0;
+
+	while(integer > 0){
+		bit = integer % 2;
+		quot = integer / 2;
+		integer = quot;
+		if(bit == 0){
+			converted[counter] = '0';
+		}else{
+			converted[counter] = '1';
+		}
+		counter++;
+	}
+	//2's complement conversion
+	if(negative){
+		for(int i = 0; i < converted.size(); i++){
+			if(converted[i] == '0'){
+				converted[i] = '1';
+			}else{
+				converted[i] = '0';
+			}
+		}
+
+		//add one to binary
+		bool remainder = true;
+		int counter = 0;
+		while(remainder){
+			if(converted[counter] == '0'){
+				converted[counter] = '1';
+				remainder = false;
+			}else{
+				converted[counter] = '0';
+			}
+			counter++;
+		}
+	}
+	return converted;
+}
+
+vector<char> ConvertInstruction(string opcode, string operand){
+	vector<char> line(32,'0');
+	vector<char> opcodeSeq(32,'0');
+	vector<char> operandSeq(32,'0');
+
+	opcodeSeq = ConvertIntToBin(InstructionConversion(opcode));
+
+	if(InstructionConversion(opcode) != 7){
+		if(SearchTable(operand) == -1){
+			cout << endl << "Unknown Variable: " << operand << endl;
+			exit(EXIT_FAILURE);
+		}
+		operandSeq = ConvertIntToBin(SearchTable(operand));
+		for(int i = 0; i < 5; i++){
+			line[i] = operandSeq[i];
+		}
+	}
+
+
+	for(int i = 0; i < 3; i++){
+		line[i + 13] = opcodeSeq[i];
+	}
+
+
+
+	return line;
+}
+
+bool ConvertMC(){
+	for(int i = 0; i < toAssemble.size(); i++){
+		if(toAssemble[i][0] == "VAR"){
+			assembled.push_back(ConvertIntToBin(StringToInt(toAssemble[i][1])));
+		}else if(toAssemble[i][0] == "START:"){
+			assembled.push_back(ConvertInstruction(toAssemble[i][1],toAssemble[i][2]));
+			while(toAssemble[i][0] != "END:"){
+				i++;
+				if(toAssemble[i][0] == "END:"){
+					assembled.push_back(ConvertInstruction(toAssemble[i][1],"0")); //END of program
+				}else{
+					assembled.push_back(ConvertInstruction(toAssemble[i][0],toAssemble[i][1]));
+				}
+				if(i > 32){
+					cout << "Missing 'END:' ";
+					return false;
+				}
+			}
+		}else if(SearchTable(toAssemble[i][0].substr(0, toAssemble[i][0].size()-1))!= -1){
+			if(toAssemble[i][1] != "VAR"){
+				cout << i;
+				cout << "Please Declare your varibale with 'VAR'" << endl;
+				return false;
+			}
+			assembled.push_back(ConvertIntToBin(StringToInt(toAssemble[i][2])));
+		}else{
+
+			cout << "Unknown Funtion/Variable: "<< toAssemble[i][0] << endl;
+			return false;
+		}
+	}
+	return true;
 }
 
 
@@ -74,18 +209,15 @@ void CleanLine(vector<string> tokens){ //Removes comments from code;
 	if(cleaned.size() > 0){
 		toAssemble.push_back(cleaned);
 
-		for(int i=0;i < cleaned.size();i++){
+		/*for(int i=0;i < cleaned.size();i++){ DELETE THIS
 			cout << cleaned[i] << " ";
 		}
-		cout << endl;
+		cout << endl;*/
 	}
-
-	return cleaned;
 }
 
 
-vector<string> RemoveWhitespace(string line){ //I will give you a crisp highfive if you can guess what this does...
-
+vector<string> RemoveWhitespace(string line){ //removes... wait for it ... Whitespace!
 	//Answer modified from https://stackoverflow.com/questions/19887232/how-to-loop-through-a-string-by-space-how-do-i-know-the-index-no-of-the-word-i
 	//User: deepmax
 	string toAdd;
@@ -113,7 +245,45 @@ bool ReadFile(string fileName){ //reads file
 	return true;
 }
 
+void LoadSymbolTable(){
+	for(int i = 1; i < toAssemble.size(); i++){
+		if(toAssemble[i][0] == "START:"){
+			while(toAssemble[i -1][0] != "END:"){
+				i++;
+			}
+		}
+		AddToTable(toAssemble[i][0],i);
+	}
+}
 
+void DisplayAndWrite(bool write, string fileName){
+	cout << "Machine Code: " << endl;
+
+	if(write){
+		ofstream file ("MC"+fileName);
+	  	if(file.is_open()){
+			for(int i=0;i<assembled.size();i++){
+				for(int j=0;j<assembled[i].size();j++){
+					file << assembled[i][j];
+				}
+				file << "\n";
+			}
+	  	}
+	  else cout << "Unable to open file";
+	}
+
+	for(int i=0;i<assembled.size();i++){
+		for(int j=0;j<assembled[i].size();j++){
+			cout << assembled[i][j];
+		}
+		cout << endl;
+	}
+
+	if(write){
+		cout << "Output file: MC" << fileName << endl;
+	}
+
+}
 
 int main(int argc, char* argv[]){
 	string USAGE = "Usage: ./mb++ [filename]";
@@ -122,8 +292,31 @@ int main(int argc, char* argv[]){
 		return 0;
 	}
 
-	if(!ReadFile(string(argv[1]))){return 0;}
+	if(!ReadFile(string(argv[1]))){return 0;} //Read File that user entered
+	LoadSymbolTable();
 
-	cout << toAssemble.size() << endl;
+	if(!ConvertMC()){
+		cout << "Error Assembing machine code!\nPlease make sure your code is correct!";
+		return 0;
+	}
+
+	char input;
+
+	for (;;){
+	    cout << "Do you wish to write the output to a file: y/n" << endl;
+	    if (cin >> input && input == 'y' || input == 'n') {
+			if(input == 'y'){
+				DisplayAndWrite(true,string(argv[1]));
+			}
+			else{
+				DisplayAndWrite(false,"");
+			}
+	        break;
+	    } else {
+	        cout << "Please enter either y or n" << endl;
+	        cin.clear();
+	        cin.ignore();
+	    }
+	}
 	return 0;
 }

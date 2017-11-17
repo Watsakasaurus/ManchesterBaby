@@ -1,0 +1,20 @@
+; THIS PROGRAM SHOULD DO THE FIBONNACI SEQUENCE
+; The program starts at address 1, so we need to pad out address 0 
+	VAR 0       ; Declare 32-bit variable to fill space
+; Starts by adding the two numbers together
+START: 	LDN NUM01   ; Copy variable to accumulator (negated)
+	SUB NUM02   ; Subtract variable from accumulator to get sum (negated)
+	STO MYSUM   ; Store accumulator to variable - saves answer
+; The next two instructions negate the stored answer
+	LDN MYSUM   ; Copy variable to accumulator (negated)
+        STO MYSUM   ; Store accumulator to variable
+; The next instructions get the variables ready for the next run through, so the second number and the sum of the previous calculation is added together
+	LDN NUM02   ; Copy NUM02's value to the accumulator
+	STO NUM01   ; Store NUM02's value in NUM01
+	LDN MYSUM   ; Copy MYSUM's value in the accumulator
+	STO NUM02   ; Store MYSUM's value into NUM02
+	JMP START   ; Jumps back to the start
+; Variable declarations follow
+NUM01:	VAR 0 ;Declaring the starting number
+NUM02: 	VAR 1 ;Declares the second starting number
+MYSUM: VAR 0 ;Declares the sum variable

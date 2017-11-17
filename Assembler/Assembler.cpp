@@ -134,7 +134,14 @@ vector<char> ConvertInstruction(string opcode, string operand){
 	vector<char> opcodeSeq(32,'0');
 	vector<char> operandSeq(32,'0');
 
-	opcodeSeq = ConvertIntToBin(InstructionConversion(opcode));
+	int x = InstructionConversion(opcode);
+
+	if(x == -1){
+		cout << "Invalid Instruction: " << opcode << endl;
+		exit(EXIT_FAILURE);
+	}
+
+	opcodeSeq = ConvertIntToBin(x);
 
 	if(InstructionConversion(opcode) != 7){
 		if(SearchTable(operand) == -1){
@@ -151,9 +158,6 @@ vector<char> ConvertInstruction(string opcode, string operand){
 	for(int i = 0; i < 3; i++){
 		line[i + 13] = opcodeSeq[i];
 	}
-
-
-
 	return line;
 }
 
@@ -161,31 +165,10 @@ bool ConvertMC(){
 	for(int i = 0; i < toAssemble.size(); i++){
 		if(toAssemble[i][0] == "VAR"){
 			assembled.push_back(ConvertIntToBin(StringToInt(toAssemble[i][1])));
-		}else if(toAssemble[i][0] == "START:"){
-			assembled.push_back(ConvertInstruction(toAssemble[i][1],toAssemble[i][2]));
-			while(toAssemble[i][0] != "END:"){
-				i++;
-				if(toAssemble[i][0] == "END:"){
-					assembled.push_back(ConvertInstruction(toAssemble[i][1],"0")); //END of program
-				}else{
-					assembled.push_back(ConvertInstruction(toAssemble[i][0],toAssemble[i][1]));
-				}
-				if(i > 32){
-					cout << "Missing 'END:' ";
-					return false;
-				}
-			}
-		}else if(SearchTable(toAssemble[i][0].substr(0, toAssemble[i][0].size()-1))!= -1){
-			if(toAssemble[i][1] != "VAR"){
-				cout << i;
-				cout << "Please Declare your varibale with 'VAR'" << endl;
-				return false;
-			}
-			assembled.push_back(ConvertIntToBin(StringToInt(toAssemble[i][2])));
+		}else if(toAssemble[i][0] == "STP"){
+			assembled.push_back(ConvertInstruction(toAssemble[i][0],"0"));
 		}else{
-
-			cout << "Unknown Funtion/Variable: "<< toAssemble[i][0] << endl;
-			return false;
+			assembled.push_back(ConvertInstruction(toAssemble[i][0],toAssemble[i][1]));
 		}
 	}
 	return true;
@@ -208,11 +191,6 @@ void CleanLine(vector<string> tokens){ //Removes comments from code;
 
 	if(cleaned.size() > 0){
 		toAssemble.push_back(cleaned);
-
-		/*for(int i=0;i < cleaned.size();i++){ DELETE THIS
-			cout << cleaned[i] << " ";
-		}
-		cout << endl;*/
 	}
 }
 
@@ -247,13 +225,12 @@ bool ReadFile(string fileName){ //reads file
 
 void LoadSymbolTable(){
 	for(int i = 1; i < toAssemble.size(); i++){
-		if(toAssemble[i][0] == "START:"){
-			while(toAssemble[i -1][0] != "END:"){
-				i++;
-			}
+		if(toAssemble[i].size() == 3 || toAssemble[i][0].back() == ':'){
+			AddToTable(toAssemble[i][0],i);
+			toAssemble[i].erase(toAssemble[i].begin());
 		}
-		AddToTable(toAssemble[i][0],i);
 	}
+
 }
 
 void DisplayAndWrite(bool write, string fileName){

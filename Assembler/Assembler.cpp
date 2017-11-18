@@ -224,10 +224,11 @@ bool ReadFile(string fileName){ //reads file
 }
 
 void LoadSymbolTable(){
-	for(int i = 1; i < toAssemble.size(); i++){
+	for(int i = 0; i < toAssemble.size(); i++){
 		if(toAssemble[i].size() == 3 || toAssemble[i][0].back() == ':'){
 			AddToTable(toAssemble[i][0],i);
 			toAssemble[i].erase(toAssemble[i].begin());
+
 		}
 	}
 
@@ -260,6 +261,13 @@ void DisplayAndWrite(bool write, string fileName){
 		cout << "Output file: MC" << fileName << endl;
 	}
 
+}
+
+void PrintLine(vector<char> toPrint){ //Prints out vector array of characters in one line
+	for(int i = 0; i<toPrint.size();i++){
+		cout << toPrint[i];
+	}
+	cout << endl;
 }
 
 int main(int argc, char* argv[]){

@@ -33,7 +33,7 @@ void Operation::IncrementCI(){ //Adds one to binary sequence
 
 void Operation::DecodeOP(){ //Gets Opcode and Operand from Present Instruction
 	vector <char> binOpcode(3);
-	vector <char> binOperand(4);
+	vector <char> binOperand(5);
 	int counter = 0;
 	for(int i = 0; i < 5; i++){
 		binOperand[i] = PI[i];
@@ -62,13 +62,14 @@ long long int Operation::ConvertBinToInt(vector<char> binSequence){ //Convers Bi
 			if(binSequence[i] == '1'){
 				total += multiplier;
 			}
-		}	
+		}
 		multiplier = multiplier * 2;
 	}
+
 	return total;
 }
 
-vector<char> Operation::ConvertIntToBin(long long int integer){ //Converts Integer to Binary 
+vector<char> Operation::ConvertIntToBin(long long int integer){ //Converts Integer to Binary
 	vector<char> converted(registerWidth,'0');
 	bool negative = false;
 	long long int smallest = -pow(2,registerWidth-1); //Smallest Integer that our simulation can take
@@ -78,7 +79,7 @@ vector<char> Operation::ConvertIntToBin(long long int integer){ //Converts Integ
 		negative = true;
 		integer = integer*-1;
 	}
-	
+
 	if(integer < smallest || integer > largest){ //If number is too large or too small for the size of our register
 		cout << endl << "OUT OF MEMORY!" << endl;
 		exit(EXIT_FAILURE);
@@ -110,7 +111,7 @@ vector<char> Operation::ConvertIntToBin(long long int integer){ //Converts Integ
 			}
 		}
 
-		//add one to binary 
+		//add one to binary
 		bool remainder = true;
 		int counter = 0;
 		while(remainder){

@@ -13,8 +13,6 @@ bool decodeCommentary = false;
 
 string mnemonic;
 
-
-
 int ADDRESS_NUMBER = 32;
 int REGISTER_WIDTH = 32;
 string fileName = "Example.txt";;
@@ -232,7 +230,7 @@ int main(int argc, char* argv[]){
 	if(argc == 1){
 		cout << "Use '-help' to view more options to run the ManchesterBaby" << endl << endl << endl << endl;
 		return false;
-	}
+	} 
 
 	return 0;
 }

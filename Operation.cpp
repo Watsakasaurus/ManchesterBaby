@@ -3,7 +3,7 @@
 
 using namespace std;
 
-Operation::Operation(int registerSize): registerWidth (registerSize){
+Operation::Operation(int registerSize): registerWidth (registerSize){ //Initializes/resizes CI, PI and the Accumulator to the users entered size.
 	CI.resize(registerWidth);
 	PI.resize(registerWidth);
 	ACC.resize(registerWidth);
@@ -17,7 +17,7 @@ Operation::Operation(int registerSize): registerWidth (registerSize){
 	opcode = 0;
 }
 
-void Operation::IncrementCI(){ //Adds one to binary sequence
+void Operation::IncrementCI(){ //Adds one to CI's binary sequence
 	bool remainder = true;
 	int i = 0;
 		while(remainder){
@@ -32,18 +32,17 @@ void Operation::IncrementCI(){ //Adds one to binary sequence
 }
 
 void Operation::DecodeOP(){ //Gets Opcode and Operand from Present Instruction
-	vector <char> binOpcode(3);
+	vector <char> binOpcode(4);
 	vector <char> binOperand(5);
 	int counter = 0;
 	for(int i = 0; i < 5; i++){
 		binOperand[i] = PI[i];
 	}
 
-	for(int j = 13; j < 16;j++){
+	for(int j = 13; j < 17;j++){
 		binOpcode[counter] = PI[j];
 		counter++;
 	}
-
 	operand = ConvertBinToInt(binOperand);
 	opcode = ConvertBinToInt(binOpcode);
 }
@@ -81,13 +80,14 @@ vector<char> Operation::ConvertIntToBin(long long int integer){ //Converts Integ
 	}
 
 	if(integer < smallest || integer > largest){ //If number is too large or too small for the size of our register
-		cout << endl << "OUT OF MEMORY!" << endl;
+		cout << "Use command 'step more' to view where your program went wrong\n You may have used integers that are too large for the simulation!" << endl;
+		cout << endl << "OUT OF MEMORY!\nTry increasing the size of the registers!" << endl;
 		exit(EXIT_FAILURE);
 	}
 
 	//Converts the integer to a binary number
 	int bit = 0;
-	int quot = 0; //quotient
+	long long int quot = 0; //quotient
 	int counter = 0;
 
 	while(integer > 0){
@@ -127,7 +127,7 @@ vector<char> Operation::ConvertIntToBin(long long int integer){ //Converts Integ
 	return converted;
 }
 
-vector<char> Operation::FlipBinSequence(vector<char> binSequence){ //Reverses order of binary sequence Only used for testing
+vector<char> Operation::FlipBinSequence(vector<char> binSequence){ //Reverses order of binary sequence: Only used for testing
 	reverse(binSequence.begin(),binSequence.end());
 	return binSequence;
 }

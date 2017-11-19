@@ -3,16 +3,17 @@
 #include <iostream>
 #include <string>
 #include <fstream>
-#include <vector> 
+#include <vector>
 
 using namespace std;
 
-class Store{ 
+//Store Class, contains operations for accessing and changing contents of the store.
+class Store{
 	public:
 		Store(int addresses, int registerWidth);
 
 		vector<char> GetInstruction(int i);
-		bool LoadFileIntoMemory(const string fileName); 
+		bool LoadFileIntoMemory(const string fileName);
 		void WriteToStore(int i, vector<char> newItem);
 		void DisplayStore();
 		vector<vector<char> > GetStore();

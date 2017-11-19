@@ -12,7 +12,7 @@ START: 	LDN NUM01   ; Copy variable to accumulator (negated)
 		STO NUM02   ; Store MYSUM's value into NUM02
 		LDN NUM02	;negate NUM02
 		STO NUM02	;Store Positive
-		JMP NUM00   ; Jumps back to the start
+END:	JMP NUM00   ; Jumps back to the start
 NUM01:	VAR 1 ;Declaring the starting number
 NUM02: 	VAR 1 ;Declares the second starting number
 MYSUM: VAR 0 ;Declares the sum variable

@@ -18,7 +18,10 @@ int REGISTER_WIDTH = 32;
 string fileName = "Example.txt";;
 
 
-bool Execute(Operation &op, Store &store){
+bool Execute(Operation &op, Store &store){ //Performs execute operations
+	long long int a;
+	long long int b;
+	long long int c;
 	bool exit;
 	switch(op.GetOpcode()){
 		case 0:
@@ -38,7 +41,8 @@ bool Execute(Operation &op, Store &store){
 			mnemonic = "STO";
 			break;
 		case 4:
-			op.SetACC(op.ConvertIntToBin(op.ConvertBinToInt(op.GetACC()) - op.ConvertBinToInt(store.GetInstruction(op.GetOperand()))));//SUB - Subtracts Line from store from Accumulator
+			//SUB - Subtracts Line from store from Accumulator
+			op.SetACC(op.ConvertIntToBin(op.ConvertBinToInt(op.GetACC()) - op.ConvertBinToInt(store.GetInstruction(op.GetOperand()))));
 			mnemonic = "SUB";
 			break;
 		case 5:
@@ -53,15 +57,38 @@ bool Execute(Operation &op, Store &store){
 			mnemonic = "STP";
 			return true;		//STP
 			break;
+		case 8:
+			op.SetACC(op.ConvertIntToBin(op.ConvertBinToInt(op.GetACC()) + op.ConvertBinToInt(store.GetInstruction(op.GetOperand())))); //ADD - adds 2 numbers
+			mnemonic = "ADD";
+			break;
+		case 9:
+			op.SetACC(op.ConvertIntToBin(op.ConvertBinToInt(op.GetACC()) * op.ConvertBinToInt(store.GetInstruction(op.GetOperand())))); //MTP - multiply 2 numbers
+			mnemonic = "MTP";
+			break;
+		case 10:
+			op.SetACC(op.ConvertIntToBin(op.ConvertBinToInt(op.GetACC()) / op.ConvertBinToInt(store.GetInstruction(op.GetOperand())))); //DIV - Divides acc by line in store
+			mnemonic = "DIV";
+			break;
+		case 11:
+			op.SetACC(op.ConvertIntToBin(op.ConvertBinToInt(op.GetACC()) % op.ConvertBinToInt(store.GetInstruction(op.GetOperand())))); //MOD - Mods acc by line in the store
+			mnemonic = "MOD";
+			break;
+		case 12:
+			op.SetACC(op.ConvertIntToBin(op.ConvertBinToInt(op.GetACC()) * op.ConvertBinToInt(op.GetACC()))); // multiplies acc by itself
+			mnemonic = "SQR";
+			break;
+		case 13:
+			op.SetACC(op.ConvertIntToBin(op.ConvertBinToInt(store.GetInstruction(op.GetOperand())))); //LDP - Loads positive number;
+			mnemonic = "LDP";
+			break;
 	}
 	return false;
 }
 
-void DisplayEverything(Operation &op, Store &store){	//Take a wild guess
+extern void DisplayEverything(Operation &op, Store &store){	//Take a wild guess
 	vector<vector<char> > storeArray = store.GetStore();
 
 	if(step || allstep){cout << "\033c" << endl;} //Clears terminal
-
 	cout << "STORE" << endl;
 
 	for(int i=0;i<storeArray.size();i++){
@@ -108,16 +135,16 @@ void FetchExecute(Operation &op, Store &store){ //Loops through the fetch execut
 
 	while(!exit){
 		op.IncrementCI(); //Increment
-		if(allstep){DisplayEverything(op,store);cout << endl << "Cycle Number: " << i << endl;getchar();}
+		if(allstep){DisplayEverything(op,store);cout << endl << "Cycle Number: " << i << endl << "Press enter to continue!"<< endl;getchar();}
 
 		op.SetPI(store.GetInstruction(op.ConvertBinToInt(op.GetCI()))); //Fetch
-		if(allstep){DisplayEverything(op,store);cout << endl << "Cycle Number: " << i << endl;getchar();}
+		if(allstep){DisplayEverything(op,store);cout << endl << "Cycle Number: " << i << endl << "Press enter to continue!"<< endl;getchar();}
 
 		op.DecodeOP(); //Decode
-		if(allstep){DisplayEverything(op,store);cout << endl << "Cycle Number: " << i << endl;getchar();}
+		if(allstep){DisplayEverything(op,store);cout << endl << "Cycle Number: " << i << endl << "Press enter to continue!"<< endl;getchar();}
 
 		exit = Execute(op, store);//Execute
-		if(step || allstep){DisplayEverything(op,store);cout << endl << "Cycle Number: " << i << endl;getchar();}
+		if(step || allstep){DisplayEverything(op,store);cout << endl << "Cycle Number: " << i << endl << "Press enter to continue!"<< endl;getchar();}
 
 		i++;
 	}
@@ -127,7 +154,6 @@ void FetchExecute(Operation &op, Store &store){ //Loops through the fetch execut
 
 bool TestInt(char* argv){ //Test argument char array for an integer
 	string s(argv);
-
 	//Taken from first answer https://stackoverflow.com/questions/2844817/how-do-i-check-if-a-c-string-is-an-int
 	//user paercebal
 	if(s.empty() || ((!isdigit(s[0])) && (s[0] != '-') && (s[0] != '+'))) return false ;
@@ -145,7 +171,7 @@ bool ParseArgs(int argc, char* argv[]){ //Takes arguments from user
 	string REGISTERUSAGE = "USAGE ./ManchesterBaby register [register size]\nUse command '-help' to view the help file.";
 
 
-	while(argIndex < argc){
+	while(argIndex < argc){	//While there are still commands to process
 		if(string(argv[argIndex]) == "step"){
 			argIndex++;
 			if(argIndex >= argc){cout << STEPUSAGE << endl;return false;}
@@ -193,7 +219,7 @@ bool ParseArgs(int argc, char* argv[]){ //Takes arguments from user
 
 			if(TestInt(argv[argIndex])){
 				if(atoi(argv[argIndex]) < 32 || atoi(argv[argIndex])> 63){
-					cout << REGISTERUSAGE << endl << "Make sure that the number you enter is between 32 and 63, inclusive.\nThis simulation can only take a maximum of 63 bits as it requires negative numbers to run"<< endl;return false;
+					cout << REGISTERUSAGE << endl << "Make sure that the number you enter is between 32 and 63, inclusive.\nThis simulation can only take a maximum of 63 bits"<< endl;return false;
 				}else{
 					REGISTER_WIDTH = atoi(argv[argIndex]);
 				}
@@ -211,26 +237,19 @@ bool ParseArgs(int argc, char* argv[]){ //Takes arguments from user
 	return true;
 }
 
-int main(int argc, char* argv[]){
-
+int main(int argc, char* argv[]){ //Creates objects and calls fetch execute cycle.
 	if(!ParseArgs(argc,argv)){return 0;}
-
 
 	Store store(ADDRESS_NUMBER,REGISTER_WIDTH); //Creates Store object
 
-	if(!store.LoadFileIntoMemory(fileName)){
+	if(!store.LoadFileIntoMemory(fileName)){ //Load file from user into store
 		cout << "Error reading file: " << fileName << endl;
 		return 0;
 	}
-
 	Operation op(REGISTER_WIDTH); //Creates Operation object that controlls the fetch execute cycle
+	FetchExecute(op,store); //Start fetch execute
 
-	FetchExecute(op,store);
-
-	if(argc == 1){
-		cout << "Use '-help' to view more options to run the ManchesterBaby" << endl << endl << endl << endl;
-		return false;
-	} 
+	if(argc == 1){cout << "Use '-help' to view more options to run the ManchesterBaby" << endl << endl << endl << endl;}
 
 	return 0;
 }

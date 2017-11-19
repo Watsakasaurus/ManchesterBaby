@@ -1,3 +1,4 @@
+//Joe Riemersma
 #include <string>
 #include <vector>
 #include <iostream>
@@ -8,7 +9,7 @@
 
 using namespace std;
 
-struct Symbol{
+struct Symbol{ //Struct for item in the symbolTable.
 	string name;
 	int address;
 };
@@ -17,7 +18,16 @@ vector< vector<string> > toAssemble;
 vector< vector<char> > assembled;
 vector<Symbol> symbolTable;
 
-int SearchTable(string search){
+template <typename T>
+void PrintLine(vector<T> toPrint,bool a){
+	for(int i = 0; i<toPrint.size();i++){
+		cout << toPrint[i];
+		if(a){cout << " ";}
+	}
+	cout << endl;
+}
+
+int SearchTable(string search){	 //Search through table
 	for(int i = 0; i < symbolTable.size(); i++){
 		if(symbolTable[i].name == search){
 			return symbolTable[i].address;
@@ -26,7 +36,7 @@ int SearchTable(string search){
 	return -1;
 }
 
-void AddToTable(string name, int address){
+void AddToTable(string name, int address){ //Add item to symbolTable table
 	if(SearchTable(name) != -1){
 		return;
 	}
@@ -38,10 +48,7 @@ void AddToTable(string name, int address){
 	symbolTable.push_back(newSymbol);
 }
 
-
-
-int InstructionConversion(string opCode){
-
+int InstructionConversion(string opCode){ //returns number that corresponds to instruction
 	if(opCode == "JMP"){
 		return 0;
 	}else if(opCode == "JRP"){
@@ -58,13 +65,24 @@ int InstructionConversion(string opCode){
 		return 6;
 	}else if(opCode == "STP"){
 		return 7;
+	}else if(opCode == "ADD"){
+		return 8;
+	}else if(opCode == "MTP"){
+		return 9;
+	}else if(opCode == "DIV"){
+		return 10;
+	}else if(opCode == "MOD"){
+		return 11;
+	}else if(opCode == "SQR"){
+		return 12;
+	}else if(opCode == "LDP"){
+		return 13;
 	}else{
 		return -1;
 	}
-
 }
 
-long long int StringToInt(string s){
+long long int StringToInt(string s){ //Turns String to int
 	long long int x;
 	stringstream ss(s);
 	ss >> x;
@@ -129,7 +147,7 @@ vector<char> ConvertIntToBin(long long int integer){ //Converts Integer to Binar
 	return converted;
 }
 
-vector<char> ConvertInstruction(string opcode, string operand){
+vector<char> ConvertInstruction(string opcode, string operand){ //Converts into an Instruction line to binary
 	vector<char> line(32,'0');
 	vector<char> opcodeSeq(32,'0');
 	vector<char> operandSeq(32,'0');
@@ -140,12 +158,11 @@ vector<char> ConvertInstruction(string opcode, string operand){
 		cout << "Invalid Instruction: " << opcode << endl;
 		exit(EXIT_FAILURE);
 	}
-
 	opcodeSeq = ConvertIntToBin(x);
 
 	if(InstructionConversion(opcode) != 7){
 		if(SearchTable(operand) == -1){
-			cout << endl << "Unknown Variable: " << operand << endl;
+			cout << endl << "Unknown Lable: " << operand << endl;
 			exit(EXIT_FAILURE);
 		}
 		operandSeq = ConvertIntToBin(SearchTable(operand));
@@ -154,15 +171,15 @@ vector<char> ConvertInstruction(string opcode, string operand){
 		}
 	}
 
-
-	for(int i = 0; i < 3; i++){
+	for(int i = 0; i < 4; i++){
 		line[i + 13] = opcodeSeq[i];
 	}
 	return line;
 }
 
-bool ConvertMC(){
+bool ConvertMC(){ //Works out if line contains a variable or command, calls functions to translate accordingly
 	for(int i = 0; i < toAssemble.size(); i++){
+		cout <<"Converting Instruction:"; PrintLine(toAssemble[i],true);
 		if(toAssemble[i][0] == "VAR"){
 			assembled.push_back(ConvertIntToBin(StringToInt(toAssemble[i][1])));
 		}else if(toAssemble[i][0] == "STP"){
@@ -170,6 +187,7 @@ bool ConvertMC(){
 		}else{
 			assembled.push_back(ConvertInstruction(toAssemble[i][0],toAssemble[i][1]));
 		}
+		cout << "Machine code: "; PrintLine(assembled.back(),false); cout << endl;
 	}
 	return true;
 }
@@ -223,18 +241,17 @@ bool ReadFile(string fileName){ //reads file
 	return true;
 }
 
-void LoadSymbolTable(){
+void LoadSymbolTable(){ //Adds Lables to symbol table, then strips them from code
 	for(int i = 0; i < toAssemble.size(); i++){
 		if(toAssemble[i].size() == 3 || toAssemble[i][0].back() == ':'){
 			AddToTable(toAssemble[i][0],i);
 			toAssemble[i].erase(toAssemble[i].begin());
-
 		}
 	}
 
 }
 
-void DisplayAndWrite(bool write, string fileName){
+void DisplayAndWrite(bool write, string fileName){ //Writes to file and displays
 	cout << "Machine Code: " << endl;
 
 	if(write){
@@ -251,10 +268,7 @@ void DisplayAndWrite(bool write, string fileName){
 	}
 
 	for(int i=0;i<assembled.size();i++){
-		for(int j=0;j<assembled[i].size();j++){
-			cout << assembled[i][j];
-		}
-		cout << endl;
+		PrintLine(assembled[i],false);
 	}
 
 	if(write){
@@ -263,14 +277,8 @@ void DisplayAndWrite(bool write, string fileName){
 
 }
 
-void PrintLine(vector<char> toPrint){ //Prints out vector array of characters in one line
-	for(int i = 0; i<toPrint.size();i++){
-		cout << toPrint[i];
-	}
-	cout << endl;
-}
-
-int main(int argc, char* argv[]){
+int main(int argc, char* argv[]){ //Gets user input, calls functions to start convertion
+	char input;
 	string USAGE = "Usage: ./mb++ [filename]";
 	if(argc != 2){
 		cout << USAGE << endl;
@@ -278,14 +286,14 @@ int main(int argc, char* argv[]){
 	}
 
 	if(!ReadFile(string(argv[1]))){return 0;} //Read File that user entered
-	LoadSymbolTable();
+	LoadSymbolTable();	//Load symbols into table
 
-	if(!ConvertMC()){
-		cout << "Error Assembing machine code!\nPlease make sure your code is correct!";
+	if(SearchTable("START") == -1 && SearchTable("END") == -1){ //Check if file is readable by the assmbler (poor test and can be maniplualted to pass but it works)
+		cout << "Unable to recogise file!\nPlease include a 'START:' and an 'END:' lable to your file!" << endl;
 		return 0;
 	}
 
-	char input;
+	ConvertMC(); //Starts convertion
 
 	for (;;){
 	    cout << "Do you wish to write the output to a file: y/n" << endl;

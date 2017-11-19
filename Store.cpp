@@ -12,27 +12,24 @@ Store::Store(int addresses, int registerWidth): addressNumber (addresses), maxRe
 		{
 			storeArray[i][j] = '0';
 		}
-	}	
+	}
 }
 
-bool Store::LoadFileIntoMemory(const string fileName){ //Reads file into 2D array 
+bool Store::LoadFileIntoMemory(const string fileName){ //Reads file into 2D array
 	int i = 0;
 	string line;
-
 	ifstream machineCodeFile(fileName.c_str());
 
-	if(machineCodeFile.is_open()){
+	if(machineCodeFile.is_open()){				//Reads lines from file and stores them into 2d vector array.
 		while(getline(machineCodeFile,line)){
 			if(line.length() <= maxRegisterWidth + 1){   //+1 Allows for newline character
 				for(int j = 0; j < line.length()-1; j++){
 					if(line.at(j) != '1' && line.at(j) != '0'){
-						
 						return false;
 					}
 					storeArray[i][j] = line.at(j);
 				}
 			}else{
-				
 				return false;
 			}
 			i++;
